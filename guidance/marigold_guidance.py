@@ -1,3 +1,4 @@
+import time
 import warnings
 import diffusers
 import numpy as np
@@ -61,6 +62,9 @@ class marigold_guidance(MarigoldNormalsPipeline):
             image_offset = None
         optimizer = torch.optim.Adam(param_groups) if param_groups else None
 
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_start = time.time()
         for its, t in enumerate(self.scheduler.timesteps):
             for it in range(num_opt):
                 img_input = image + image_offset if image_offset is not None else image
@@ -99,10 +103,20 @@ class marigold_guidance(MarigoldNormalsPipeline):
                 current_pred_latent.data = self.scheduler.step(
                     noise, t, current_pred_latent, generator=generator
                 ).prev_sample
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        elapsed_time = time.time() - t_start
 
         with torch.no_grad():
             prediction = latent_to_normal(current_pred_latent.detach()) + normal_offset.detach()
+            Ls = frac_s.detach()
+            Ld = (s_obs[0] - Ls).detach()
 
         prediction = self.image_processor.pt_to_numpy(prediction)
         self.maybe_free_model_hooks()
-        return prediction.squeeze()
+        return (
+            prediction.squeeze(),
+            Ls.permute(1, 2, 0).cpu().numpy(),
+            Ld.permute(1, 2, 0).cpu().numpy(),
+            elapsed_time,
+        )

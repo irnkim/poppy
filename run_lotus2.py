@@ -259,7 +259,7 @@ def main():
             process_res = None
 
         with torch.no_grad():
-            result = pipe(
+            result, Ls, Ld, elapsed_time = pipe(
                 rgb_in=image_ts,
                 prompt="",
                 num_inf=args.num_inf,
@@ -281,7 +281,8 @@ def main():
         vis_result = normal_vis(None, pred, mask)
         if vis_result is not None:
             vis_result[0].save(os.path.join(vis_dir, image_name + ".png"))
-        np.savez(os.path.join(outputs_dir, image_name + ".npz"), normals=pred)
+        save_Ls_Ld_vis(vis_dir, image_name, Ls, Ld)
+        np.savez(os.path.join(outputs_dir, image_name + ".npz"), normals=pred, Ls=Ls, Ld=Ld)
 
         if normal_obs is not None:
             metrics = compute_metrics(
@@ -298,16 +299,18 @@ def main():
 
             print(
                 f"[{image_name}] "
+                f"time={elapsed_time:.4f}s "
                 f"mean={mean_loss:.4f} median={median:.4f} rmse={rmse:.4f} "
                 f"acc11={acc_11:.4f} acc22={acc_22:.4f} acc30={acc_30:.4f}"
             )
             csvwriter.writerow([
-                image_name,
+                image_name, f"{elapsed_time:.4f}",
                 f"{mean_loss:.4f}", f"{median:.4f}", f"{rmse:.4f}",
                 f"{acc_11:.4f}", f"{acc_22:.4f}", f"{acc_30:.4f}",
             ])
         else:
-            print(f"[{image_name}] no ground-truth normals, skipping metrics")
+            print(f"[{image_name}] no ground-truth normals, skipping metrics (time={elapsed_time:.4f}s)")
+            csvwriter.writerow([image_name, f"{elapsed_time:.4f}"])
 
     f.close()
 

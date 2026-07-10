@@ -1,5 +1,6 @@
 # Adapted from Lotus-2: https://github.com/EnVision-Research/Lotus-2
 from typing import Union, Optional, List, Dict, Any
+import time
 import numpy as np
 import torch
 from diffusers import FluxPipeline
@@ -62,6 +63,9 @@ class lotus2_guidance(FluxPipeline):
                     prompt=prompt, prompt_2=None, device=device,
                 )
 
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t_start = time.time()
             for op in range(num_opt):
                 if param_groups:
                     optimizer.zero_grad(set_to_none=True)
@@ -170,6 +174,12 @@ class lotus2_guidance(FluxPipeline):
                 if param_groups:
                     loss.backward()
                     optimizer.step()
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            elapsed_time = time.time() - t_start
+
+            Ls = frac_s.detach()
+            Ld = (s_obs[0] - Ls).detach()
 
         # Final detail sharpener denoising loop (use detached offset for final pass)
         with torch.no_grad():
@@ -251,6 +261,9 @@ class lotus2_guidance(FluxPipeline):
         self.maybe_free_model_hooks()
         torch.cuda.empty_cache()
 
+        Ls_np = Ls.permute(1, 2, 0).cpu().numpy()
+        Ld_np = Ld.permute(1, 2, 0).cpu().numpy()
+
         if not return_dict:
-            return (image,)
-        return FluxPipelineOutput(images=image)
+            return (image,), Ls_np, Ld_np, elapsed_time
+        return FluxPipelineOutput(images=image), Ls_np, Ld_np, elapsed_time

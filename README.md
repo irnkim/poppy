@@ -76,8 +76,9 @@ Lotus-2 model weights are auto-downloaded from [jingheya/Lotus-2](https://huggin
 
 Output is written to `--output` (defaults to `<data>/output`) for all entry points:
 - `vis/<name>.png` — color-coded normal map visualization
-- `outputs/<name>.npz` — predicted normals as a numpy array (`normals` key)
-- `log.csv` — per-image angular error metrics (mean, median, RMSE, acc@11.25°/22.5°/30°)
+- `vis/<name>_Ls.png`, `vis/<name>_Ld.png` — recovered specular / diffuse intensity visualizations
+- `outputs/<name>.npz` — predicted normals and recovered specular/diffuse intensity as numpy arrays (`normals`, `Ls`, `Ld` keys)
+- `log.csv` — per-image optimization time (`time_sec`, wall-clock seconds for the num_opt optimization steps) and angular error metrics (mean, median, RMSE, acc@11.25°/22.5°/30°, blank if no ground-truth normals are available)
 
 ---
 

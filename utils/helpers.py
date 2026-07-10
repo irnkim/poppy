@@ -104,11 +104,17 @@ def normal_vis(pipe, pred, mask, convert=True):
     return Image.fromarray(vis_np.astype(np.uint8)), vis_np.astype(np.float32) / 255.0
 
 
+def save_Ls_Ld_vis(vis_dir, image_name, Ls, Ld):
+    for name, val in (("Ls", Ls), ("Ld", Ld)):
+        val_img = Image.fromarray((np.clip(val, 0.0, 1.0) * 255.0 + 0.5).astype(np.uint8))
+        val_img.save(os.path.join(vis_dir, f"{image_name}_{name}.png"))
+
+
 def open_log_file(out_dir):
     loss_log_path = os.path.join(out_dir, "log.csv")
     f = open(loss_log_path, "w", newline="")
     writer_csv = csv.writer(f)
-    writer_csv.writerow(["object", "mean_loss", "median", "rmse", "acc_11", "acc_22", "acc_30"])
+    writer_csv.writerow(["object", "time_sec", "mean_loss", "median", "rmse", "acc_11", "acc_22", "acc_30"])
     print("Logging to:", loss_log_path, "\n")
     return f, writer_csv
 

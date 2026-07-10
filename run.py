@@ -77,7 +77,7 @@ def main():
             s_obs = torch.cat([I_obs, Q_obs, U_obs], dim=0)
             image = torch.clamp(image, 0, 1)
 
-        outputs = pipe(
+        pred, Ls, Ld, elapsed_time = pipe(
             image=image,
             s_obs=s_obs,
             phi_obs=phi_obs,
@@ -92,13 +92,13 @@ def main():
             normal_lr=args.normal_lr,
         )
 
-        pred = outputs[0] if isinstance(outputs, tuple) else outputs
         pred /= np.linalg.norm(pred, axis=2, keepdims=True)
 
         vis = normal_vis(pipe, pred, mask)
         if vis is not None:
             vis[0].save(os.path.join(vis_dir, image_name + ".png"))
-        np.savez(os.path.join(outputs_dir, image_name + ".npz"), normals=pred)
+        save_Ls_Ld_vis(vis_dir, image_name, Ls, Ld)
+        np.savez(os.path.join(outputs_dir, image_name + ".npz"), normals=pred, Ls=Ls, Ld=Ld)
 
         if normal_obs is not None:
             metrics = compute_metrics(
@@ -115,16 +115,18 @@ def main():
 
             print(
                 f"[{image_name}] "
+                f"time={elapsed_time:.4f}s "
                 f"mean={mean_loss:.4f} median={median:.4f} rmse={rmse:.4f} "
                 f"acc11={acc_11:.4f} acc22={acc_22:.4f} acc30={acc_30:.4f}"
             )
             csvwriter.writerow([
-                image_name,
+                image_name, f"{elapsed_time:.4f}",
                 f"{mean_loss:.4f}", f"{median:.4f}", f"{rmse:.4f}",
                 f"{acc_11:.4f}", f"{acc_22:.4f}", f"{acc_30:.4f}",
             ])
         else:
-            print(f"[{image_name}] no ground-truth normals, skipping metrics")
+            print(f"[{image_name}] no ground-truth normals, skipping metrics (time={elapsed_time:.4f}s)")
+            csvwriter.writerow([image_name, f"{elapsed_time:.4f}"])
 
     f.close()
 

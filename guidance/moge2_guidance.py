@@ -1,4 +1,5 @@
 import builtins
+import time
 import torch
 from moge.model.v2 import MoGeModel
 from diffusers.pipelines.marigold.marigold_image_processing import MarigoldImageProcessor
@@ -50,6 +51,9 @@ class moge2_guidance:
         min_tokens, max_tokens = 1200, 3600
         num_tokens = int(min_tokens + (9 / 9) * (max_tokens - min_tokens))
 
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        t_start = time.time()
         for it in range(num_opt):
             if param_groups:
                 optimizer.zero_grad(set_to_none=True)
@@ -75,6 +79,9 @@ class moge2_guidance:
             if param_groups:
                 loss.backward()
                 optimizer.step()
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        elapsed_time = time.time() - t_start
 
         with torch.no_grad():
             img_input = image + image_offset.detach() if image_offset is not None else image
@@ -88,4 +95,13 @@ class moge2_guidance:
             if normal_lr > 0:
                 normal0 = normal0 + normal_offset.detach()
             normal_hat = normal0 / (normal0.norm(dim=1, keepdim=True) + eps)
-            return normal_hat.permute(0, 2, 3, 1).squeeze().cpu().numpy()
+
+            Ls = frac_s.detach()
+            Ld = (s_obs[0] - Ls).detach()
+
+            return (
+                normal_hat.permute(0, 2, 3, 1).squeeze().cpu().numpy(),
+                Ls.permute(1, 2, 0).cpu().numpy(),
+                Ld.permute(1, 2, 0).cpu().numpy(),
+                elapsed_time,
+            )
