@@ -1,9 +1,9 @@
-# <img src="poppy_icon.png" height="32" style="vertical-align:middle;margin-right:6px;">Poppy: Polarization-based Plug-and-Play Guidance for Enhancing Monocular Normal Estimation (ECCV 2026)
+# <img src="poppy_icon.png" height="32" style="vertical-align:middle;margin-right:6px;">Poppy: Polarization-based Plug-and-Play Guidance for Enhancing Monocular Normal Estimation (ECCV 2026 Oral)
 
 [Irene Kim](https://irnkim.github.io), [Sai Tanmay Reddy Chakkera](https://starc52.net), [Alexandros Graikos](https://alexgraikos.github.io/), [Dimitris Samaras](https://www3.cs.stonybrook.edu/~samaras/), [Akshat Dave](https://akshatdave.github.io/)  
 Stony Brook University
 
-[![Project Page](https://img.shields.io/badge/Project-Page-blue)](https://irnkim.github.io/poppy/) [![arXiv](https://img.shields.io/badge/arXiv-PDF-b31b1b)](https://arxiv.org/abs/2603.27891)
+[![ECCV 2026 Oral](https://img.shields.io/badge/ECCV%202026-Oral-b05a00)](https://irnkim.github.io/poppy/) [![Project Page](https://img.shields.io/badge/Project-Page-blue)](https://irnkim.github.io/poppy/) [![arXiv](https://img.shields.io/badge/arXiv-PDF-b31b1b)](https://arxiv.org/abs/2603.27891)
 
 ---
 
