@@ -1,4 +1,4 @@
-![ECCV 2026 Oral · Best Paper Honorable Mention](https://img.shields.io/badge/ECCV%202026-Oral%20%C2%B7%20Best%20Paper%20Honorable%20Mention-b05a00?style=for-the-badge)
+### ECCV 2026 Oral · Best Paper Honorable Mention
 
 # <img src="poppy_icon.png" height="32" style="vertical-align:middle;margin-right:6px;">Poppy: Polarization-based Plug-and-Play Guidance for Enhancing Monocular Normal Estimation
 
