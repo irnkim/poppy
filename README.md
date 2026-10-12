@@ -1,6 +1,6 @@
-# <img src="poppy_icon.png" height="32" style="vertical-align:middle;margin-right:6px;">Poppy: Polarization-based Plug-and-Play Guidance for Enhancing Monocular Normal Estimation
+<strong style="color:#b05a00;font-size:22px;">ECCV 2026 Oral · Best Paper Honorable Mention</strong>
 
-<strong style="color:#b05a00;">ECCV 2026 Oral · Best Paper Honorable Mention</strong>
+# <img src="poppy_icon.png" height="32" style="vertical-align:middle;margin-right:6px;">Poppy: Polarization-based Plug-and-Play Guidance for Enhancing Monocular Normal Estimation
 
 [Irene Kim](https://irnkim.github.io), [Sai Tanmay Reddy Chakkera](https://starc52.net), [Alexandros Graikos](https://alexgraikos.github.io/), [Dimitris Samaras](https://www3.cs.stonybrook.edu/~samaras/), [Akshat Dave](https://akshatdave.github.io/)  
 Stony Brook University
